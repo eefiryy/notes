@@ -1,0 +1,19 @@
+strings = [
+    [
+        "hello there",
+        "how are you",
+    ],
+    [
+        "goodbye world",
+        "hello world",
+    ]
+]
+word = "goodbye"
+
+for page in strings:
+    found = False
+    for line in page:
+        if word in line:
+            found = True
+            break
+    print(found)

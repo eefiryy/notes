@@ -1,0 +1,27 @@
+def row_winner(board):
+    for row in board:
+        if row[0] != ' ' and all(cell == row[0] for cell in row):
+            return True
+    return False
+
+assert_equal(
+    row_winner(
+        [
+            ['A', 'A', 'B', 'A'],
+            [' ', ' ', ' ', ' '],
+            ['A', ' ', ' ', 'A'],
+            ['B', ' ', 'B', 'A']
+        ]
+    ),
+    False
+)
+assert_equal(
+    row_winner(
+        [
+            ['X', ' ', 'X'],
+            ['O', 'X', 'X'],
+            ['O', 'O', 'O']
+        ]
+    ),
+    True
+)

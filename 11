@@ -1,0 +1,14 @@
+def format_board(board):
+    n = len(board)
+    separator = "+".join(["-"] * n)
+    rows = ["|".join(row) for row in board]
+    return ("\n" + separator + "\n").join(rows)
+
+assert_equal(
+    format_board([
+        ['X', 'O', 'X'],
+        ['O', ' ', ' '],
+        [' ', 'X', 'O']
+    ]),
+    'X|O|X\n-+-+-\nO| | \n-+-+-\n |X|O'
+)

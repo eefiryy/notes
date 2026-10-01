@@ -1,0 +1,14 @@
+def format_board(board):
+    n = len(board)
+    header = " " + "".join(str(i + 1) for i in range(n))
+    rows = [str(i + 1) + "".join(board[i]) for i in range(n)]
+    return "\n".join([header] + rows)
+
+assert_equal(
+    format_board([
+        ['X', 'O', 'X'],
+        ['O', ' ', ' '],
+        [' ', 'X', 'O']
+    ]),
+    ' 123\n1XOX\n2O  \n3 XO'
+)

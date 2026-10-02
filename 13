@@ -1,0 +1,14 @@
+def play_move(board, player):
+    row = board[1]
+    row[0] = player
+
+def play_game():
+    board = [
+        [" ", " ", " "],
+        [" ", " ", " "],
+        [" ", " ", " "],
+    ]
+    play_move(board, "X")
+    print(board)
+
+play_game()

@@ -1,0 +1,24 @@
+def make_board(size):
+    row = []
+    for _ in range(size):
+        row.append(' ')
+    board = []
+    for _ in range(size):
+        board.append(row)
+    return board
+
+def test():
+    board = make_board(3)
+    assert_equal(board, [
+        [' ', ' ', ' '],
+        [' ', ' ', ' '],
+        [' ', ' ', ' '],
+    ])
+    board[0][0] = 'X'
+    assert_equal(board, [
+        ['X', ' ', ' '],
+        [' ', ' ', ' '],
+        [' ', ' ', ' '],
+    ])
+
+test()

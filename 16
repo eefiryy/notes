@@ -1,0 +1,12 @@
+def make_board(size):
+    return [[' '] * size for _ in range(size)]
+
+def format_board(board):
+    first_row = ' '
+    for i in range(len(board)):
+        first_row += str(i + 1)
+    joined_rows = [first_row]
+    for i in range(len(board)):
+        joined_row = str(i + 1) + ''.join(board[i])
+        joined_rows.append(joined_row)
+    return "\n".join(joined_rows)

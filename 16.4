@@ -1,0 +1,134 @@
+import random
+
+
+moi_slova = ["привет", "олимпиада", "программа", "пирожок", "пароль", "коробка", "ученик"]
+
+
+kartinki = [
+    """
+     -----
+     |   |
+         |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+         |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+     |   |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|   |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+         |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+    /    |
+         |
+    =========
+    """,
+    """
+     -----
+     |   |
+     O   |
+    /|\\  |
+    / \\  |
+         |
+    =========
+    """
+]
+
+
+def viselica_game():
+    slovo = random.choice(moi_slova)
+    nazvannye_bukvy = set()
+    oshibki = 0
+    maks_oshibok = len(kartinki) - 1
+    
+    print("игра виселица")
+    print(f"слово из {len(slovo)} букв, удачи\n")
+    
+    while oshibki < maks_oshibok:
+        print(kartinki[oshibki])
+        
+        pokaz = ""
+        for bukva in slovo:
+            if bukva in nazvannye_bukvy:
+                pokaz += bukva + " "
+            else:
+                pokaz += "_ "
+        print(f"\nслово: {pokaz}")
+        print(f"ошибке: {oshibki} из {maks_oshibok}")
+        
+        if nazvannye_bukvy:
+            vse = ", ".join(sorted(nazvannye_bukvy))
+            print(f"уже называл: {vse}")
+        else:
+            print("пока букв не называл")
+        print()
+        
+        vse_ugadal = True
+        for bukva in slovo:
+            if bukva not in nazvannye_bukvy:
+                vse_ugadal = False
+                break
+        
+        if vse_ugadal:
+            print("побда, ты угадал слово:", slovo)
+            return
+        
+        vvod = input("введи букву: ").strip().lower()
+        
+        if len(vvod) != 1 or not vvod.isalpha():
+            print("надо ввести одну букву\n")
+            continue
+        
+        if vvod in nazvannye_bukvy:
+            print("эту букву ты уже называл\n")
+            continue
+        
+        nazvannye_bukvy.add(vvod)
+        
+        if vvod in slovo:
+            print(f"есть буква {vvod}\n")
+        else:
+            oshibki += 1
+            print(f"буквы {vvod} нет в слове\n")
+    
+    print(kartinki[oshibki])
+    print(f"ты проиграл, слово было: {slovo}")
+
+
+viselica_game()

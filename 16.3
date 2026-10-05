@@ -1,0 +1,70 @@
+import random
+import string
+
+
+def parol_func(dlina, nuzhny_malenkie, nuzhny_bolshie, nuzhny_cifry, nuzhny_simvoly):
+    iz_chego_vybirat = ""
+    
+    if nuzhny_malenkie:
+        iz_chego_vybirat += string.ascii_lowercase
+    
+    if nuzhny_bolshie:
+        iz_chego_vybirat += string.ascii_uppercase
+    
+    if nuzhny_cifry:
+        iz_chego_vybirat += string.digits
+    
+    if nuzhny_simvoly:
+        iz_chego_vybirat += "!@#$%^&*()-_=+"
+    
+    if iz_chego_vybirat == "":
+        return None
+    
+    parol = ""
+    for _ in range(dlina):
+        parol += random.choice(iz_chego_vybirat)
+    
+    return parol
+
+
+def da_net(vopros):
+    otvet = input(vopros + " (да/нет): ").strip().lower()
+    if otvet in ("да", "д", "yes", "y"):
+        return True
+    return False
+
+
+def start():
+    print("=" * 40)
+    print("        генератор паролей")
+    print("=" * 40)
+    
+    while True:
+        try:
+            dlina = int(input("какая длина пароля? "))
+            if dlina < 1:
+                print("длина должна быть больше нуля")
+                continue
+        except ValueError:
+            print("надо ввести число")
+            continue
+        
+        malenkie = da_net("нужны строчные буквы?")
+        bolshie  = da_net("нужны заглавные буквы?")
+        cifry    = da_net("нужны цифры?")
+        simvoly  = da_net("нужны спецсимволы?")
+        
+        parol = parol_func(dlina, malenkie, bolshie, cifry, simvoly)
+        
+        if parol is None:
+            print("ты нечего не выбрал, пароль не сделать")
+        else:
+            print(f"\nвот твой пороль: {parol}\n")
+        
+        eshe = da_net("зделать ещё один?")
+        if not eshe:
+            print("пока")
+            break
+
+
+start()

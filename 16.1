@@ -1,0 +1,14 @@
+def proverka(spisok_ballov, ball_uchenika):
+    sortirovka = sorted(spisok_ballov, reverse=True)
+    tri_luchshih = sortirovka[:3]
+    
+    if ball_uchenika in tri_luchshih:
+        print("вы в троке победителей")
+    else:
+        print("вы не попали в тройку победителей")
+
+
+balli = [20, 48, 52, 38, 36, 13, 7, 41, 34, 24, 5, 51, 9, 14, 28]
+
+proverka(balli, 52)
+proverka(balli, 10)

@@ -1,0 +1,13 @@
+def korobki(skolko_pirozhkov):
+    for chislo in range(1, skolko_pirozhkov + 1):
+        if chislo % 3 == 0 and chislo % 5 == 0:
+            print(f"{chislo} - расфасуем по 3 или по 5")
+        elif chislo % 5 == 0:
+            print(f"{chislo} - расфасуем по 5")
+        elif chislo % 3 == 0:
+            print(f"{chislo} - расфасуем по 3")
+        else:
+            print(f"{chislo} - не закзываем")
+
+
+korobki(14)

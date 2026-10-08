@@ -1,0 +1,16 @@
+def total_cost(cart, quantities, prices):
+    result = 0
+    for item in cart:
+        price = prices[item]
+        quantity = quantities[item]
+        result += price * quantity
+    return result
+
+assert_equal(
+    total_cost(
+        ['dog', 'box'],
+        {'dog': 5000000, 'box': 2},
+        {'apple': 2, 'box': 5, 'cat': 100, 'dog': 100},
+    ),
+    500000010,
+)

@@ -1,0 +1,9 @@
+def substitute(string, d):
+    result = ''
+    for char in string:
+        result += d[char]
+    return result
+
+original = 'AGTAGCGTCCTTAGTTACAGGATGGCTTAT'
+expected = 'TCATCGCAGGAATCAATGTCCTACCGAATA'
+assert_equal(substitute(original, {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}), expected)

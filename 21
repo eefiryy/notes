@@ -1,0 +1,7 @@
+def print_words(french):
+    for english, french_word in french.items():
+        print(f'English: {english}')
+        print(f'French: {french_word}')
+        print('---')
+
+print_words({'apple': 'pomme', 'box': 'boite'})

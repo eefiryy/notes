@@ -1,5 +1,6 @@
 * { box-sizing: border-box; }
 
+
 :root {
   --bg: #f0f7f4;
   --ink: #000000;

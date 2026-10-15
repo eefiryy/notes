@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Клеточная лаборатория</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="game">
+    <header class="topbar">
+      <h1>Клеточная лаборатория</h1>
+      <div class="hud">
+        <div>Очки: <span id="score">0</span></div>
+        <div>Ход: <span id="turn">1</span> / 10</div>
+        <div>Множитель: <span id="multiplier">×1</span></div>
+      </div>
+    </header>
+
+    <p class="hint">
+      Выберите органеллы, чтобы собрать жизнеспособную клетку.
+      Комбинация должна быть из списка допустимых.
+    </p>
+
+    <section id="organelles" class="organelles"></section>
+
+    <section id="current" class="current">
+      <h2>Текущий набор</h2>
+      <div id="current-list" class="chips"></div>
+      <p id="combo-info" class="combo-info">Комбинация: —</p>
+    </section>
+
+    <div class="actions">
+      <button id="confirm" disabled>Подтвердить</button>
+      <button id="reset-selection" class="secondary">Сбросить выбор</button>
+      <button id="remove-one" class="secondary" disabled>Сбросить 1 элемент</button>
+    </div>
+
+    <p id="message" class="message"></p>
+
+    <section id="upgrades" class="upgrades" hidden>
+      <h2>Выберите улучшение</h2>
+      <div class="upgrade-grid">
+        <button class="upgrade" data-upgrade="fast_evolution">
+          <strong>Быстрая эволюция</strong>
+          <span>Множитель очков ×1,5 до конца игры</span>
+        </button>
+        <button class="upgrade" data-upgrade="precise_selection">
+          <strong>Точный отбор</strong>
+          <span>Следующий ход: сбросить один элемент</span>
+        </button>
+        <button class="upgrade" data-upgrade="cell_division">
+          <strong>Деление клетки</strong>
+          <span>Максимум набора 5 → 6</span>
+        </button>
+      </div>
+    </section>
+
+    <section id="gameover" class="gameover" hidden>
+      <h2>Игра окончена</h2>
+      <p>Итоговый счёт: <span id="final-score">0</span></p>
+      <button id="restart">Начать заново</button>
+    </section>
+  </main>
+
+  <script src="./script.js"></script>
+</body>
+</html>

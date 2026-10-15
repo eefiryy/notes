@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Гаражная студия</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main id="game">
+    <header class="header">
+      <h1>Гаражная студия</h1>
+      <p class="subtitle">Запиши первый трек и стань известным. Цель — 10&nbsp;000 слушателей.</p>
+    </header>
+
+    <section class="stats">
+      <div class="stat stat-listeners">
+        <span class="stat-label">Слушатели</span>
+        <span class="stat-value" id="listeners">0</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">За такт</span>
+        <span class="stat-value" id="per-click">1</span>
+      </div>
+      <div class="stat">
+        <span class="stat-label">В секунду</span>
+        <span class="stat-value" id="per-second">0</span>
+      </div>
+      <div class="stat stat-combo">
+        <span class="stat-label">Серия</span>
+        <span class="stat-value">×<span id="multiplier">1.00</span></span>
+        <span class="stat-hint">серия: <span id="combo">0</span></span>
+      </div>
+    </section>
+
+    <section class="click-area">
+      <button id="record-btn" type="button">Записать такт</button>
+      <div class="combo-bar" title="Время до сброса серии">
+        <div id="combo-fill"></div>
+      </div>
+      <p class="combo-hint">Кликай быстрее раза в секунду — серия поднимает множитель. Пауза сбрасывает её.</p>
+      <div id="float-layer" aria-hidden="true"></div>
+    </section>
+
+    <section class="upgrades">
+      <h2>Улучшения студии</h2>
+      <div id="upgrade-list"></div>
+    </section>
+
+    <footer class="footer">
+      <button id="reset-btn" type="button" class="reset-btn">Новая игра</button>
+    </footer>
+  </main>
+
+  <div id="victory" class="victory" hidden>
+    <div class="victory-card">
+      <h2>Ты известен!</h2>
+      <p>Твоя гаражная студия набрала <strong>10&nbsp;000 слушателей</strong>. Первый трек стал хитом!</p>
+      <button id="victory-continue" type="button">Продолжить запись</button>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

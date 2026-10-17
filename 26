@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Экопары — Игра на запоминание и сортировку отходов</title>
+  <link rel="stylesheet" href="./style.css">
+</head>
+<body>
+  <main class="app-container">
+    <!-- Шапка с названием, экологической подсказкой и кнопкой «Новая игра» -->
+    <header class="game-header">
+      <div class="brand-block">
+        <div class="brand-logo" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+            <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="game-title">Экопары</h1>
+          <p class="game-subtitle">Собери пары отходов для переработки</p>
+        </div>
+      </div>
+      <button type="button" id="new-game-btn" class="btn-secondary">
+        Новая игра
+      </button>
+    </header>
+
+    <!-- Панель показателей: Счёт, Ходы, Найдено: N / 8 -->
+    <section class="stats-bar" aria-label="Показатели партии">
+      <div class="stat-card">
+        <span class="stat-label">Счёт</span>
+        <span id="score-value" class="stat-value" aria-live="polite">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Ходы</span>
+        <span id="moves-value" class="stat-value" aria-live="polite">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Прогресс</span>
+        <span id="found-value" class="stat-found-text" aria-live="polite">Найдено: 0 / 8</span>
+      </div>
+    </section>
+
+    <!-- Переключатель «Рискнуть» и правила начисления очков -->
+    <section id="mode-panel" class="mode-panel" aria-label="Режим текущего хода">
+      <div class="mode-top-row">
+        <label id="risk-switch-label" class="risk-switch-label" for="risk-toggle">
+          <input type="checkbox" id="risk-toggle" class="risk-checkbox">
+          <span class="switch-slider" aria-hidden="true"></span>
+          <span>Рискнуть</span>
+        </label>
+        <span id="mode-status-badge" class="mode-status-badge" aria-live="polite">
+          Режим: Обычный ход (+10 / 0)
+        </span>
+      </div>
+      <div class="mode-rules-row">
+        <div class="rules-pills">
+          <span class="rule-pill">Обычный ход: <strong>+10 / 0</strong></span>
+          <span class="rule-pill risk-pill">Рискованный: <strong>+25 / −10</strong></span>
+        </div>
+        <span id="lock-hint" class="lock-hint">Можно переключить перед открытием первой карточки.</span>
+      </div>
+    </section>
+
+    <!-- Игровое поле 4 × 4 (16 карточек) -->
+    <section id="board-wrapper" class="board-wrapper" aria-label="Игровое поле">
+      <div id="game-board" class="game-board"></div>
+    </section>
+  </main>
+
+  <!-- Итоговое сообщение при нахождении всех 8 пар -->
+  <div id="victory-overlay" class="victory-overlay" role="dialog" aria-modal="true" aria-labelledby="victory-title" hidden>
+    <div class="victory-modal">
+      <div class="victory-badge" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <h2 id="victory-title" class="victory-title">Все отходы отсортированы!</h2>
+      <p class="victory-desc">
+        Вы помогли экологическому центру собрать все 8 пар вторсырья для переработки.
+      </p>
+      <div class="victory-stats">
+        <div class="victory-stat-item">
+          <span class="victory-stat-label">Итоговый счёт</span>
+          <span id="final-score" class="victory-stat-value">0</span>
+        </div>
+        <div class="victory-stat-item">
+          <span class="victory-stat-label">Количество ходов</span>
+          <span id="final-moves" class="victory-stat-value">0</span>
+        </div>
+      </div>
+      <button type="button" id="play-again-btn" class="btn-primary">
+        Играть снова
+      </button>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
+</body>
+</html>

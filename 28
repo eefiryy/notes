@@ -1,0 +1,90 @@
+const scoreElement = document.getElementById('score');
+const timeElement = document.getElementById('time');
+const perClickElement = document.getElementById('per-click');
+const messageElement = document.getElementById('message');
+const createButton = document.getElementById('create-track');
+const microphoneButton = document.getElementById('microphone');
+const synthButton = document.getElementById('synth');
+const restartButton = document.getElementById('restart');
+
+const ROUND_LENGTH = 30;
+let score = 0;
+let perClick = 1;
+let timeLeft = ROUND_LENGTH;
+let timerId = null;
+let startedAt = null;
+let gameOver = false;
+
+function updateScreen() {
+  scoreElement.textContent = score;
+  timeElement.textContent = timeLeft;
+  perClickElement.textContent = perClick;
+  createButton.disabled = gameOver;
+  microphoneButton.disabled = gameOver || score < 10;
+  synthButton.disabled = gameOver || score < 25;
+}
+
+function finishGame() {
+  if (gameOver) return;
+  gameOver = true;
+  clearInterval(timerId);
+  timerId = null;
+  timeLeft = 0;
+  timeElement.textContent = '0';
+  messageElement.textContent = `Время вышло! Итоговый счёт: ${score} очков.`;
+  updateScreen();
+}
+
+function tick() {
+  if (gameOver) return;
+  const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+  const remaining = Math.max(0, ROUND_LENGTH - elapsed);
+  if (remaining === timeLeft) return;
+  timeLeft = remaining;
+  if (timeLeft === 0) finishGame();
+  else updateScreen();
+}
+
+function startTimerIfNeeded() {
+  if (startedAt !== null || gameOver) return;
+  startedAt = Date.now();
+  timerId = setInterval(tick, 100);
+}
+
+createButton.addEventListener('click', () => {
+  if (gameOver) return;
+  startTimerIfNeeded();
+  tick();
+  if (gameOver) return;
+  score += perClick;
+  messageElement.textContent = `Трек создан! +${perClick} очков`;
+  updateScreen();
+});
+
+function buyUpgrade(cost, bonus, name) {
+  if (gameOver) return;
+  if (startedAt !== null) tick();
+  if (gameOver || score < cost) return;
+  score -= cost;
+  perClick += bonus;
+  messageElement.textContent = `${name} куплен! Теперь +${perClick} за трек.`;
+  updateScreen();
+}
+
+microphoneButton.addEventListener('click', () => buyUpgrade(10, 1, 'Микрофон'));
+synthButton.addEventListener('click', () => buyUpgrade(25, 3, 'Синтезатор'));
+
+function newRound() {
+  clearInterval(timerId);
+  timerId = null;
+  startedAt = null;
+  score = 0;
+  perClick = 1;
+  timeLeft = ROUND_LENGTH;
+  gameOver = false;
+  messageElement.textContent = 'Нажимай «Создать трек», чтобы зарабатывать очки!';
+  updateScreen();
+}
+
+restartButton.addEventListener('click', newRound);
+newRound();

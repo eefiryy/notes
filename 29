@@ -1,0 +1,9 @@
+# выбираем часть набора данных по производитель - диапазон year
+filtered_df = df[(df['Make'] == make) & (df['Year'].isin(years))].copy()
+#заполняем столбец в формате год - средняя цена
+filtered_df['mean_by_year'] = filtered_df['Year'].map(pivot_make.loc[make]) 
+
+
+mae = (filtered_df['Price']-filtered_df['mean_by_year']).abs().mean()
+
+print(f'Cреднее абсолютное отклонение (MAE) оценки по pivot для автомобилей {make} {years[0]} - {years[-1]} года = {mae:.1f}  ')

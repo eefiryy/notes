@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b12">
+  <meta name="description" content="Кибер-Щит — игра на реакцию и кибербезопасность">
+  <title>Кибер-Щит | Защита сервера</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Кибер-Щит">
+        <span class="brand-icon">⬡</span>
+        <span>CYBER<span class="accent">SHIELD</span></span>
+      </a>
+      <div class="connection">
+        <span class="status-dot"></span>
+        СИСТЕМА ЗАЩИЩЕНА
+      </div>
+    </header>
+
+    <section class="intro">
+      <div class="eyebrow">СИМУЛЯЦИЯ КИБЕРБЕЗОПАСНОСТИ / 001</div>
+      <h1>Защити свой <span>сервер.</span></h1>
+      <p>Собирай патчи безопасности. Уклоняйся от вирусов.
+        Выдержи 60 секунд под атакой.</p>
+    </section>
+
+    <section class="hud" aria-label="Игровая статистика">
+      <div class="stat">
+        <span class="stat-label">СЧЁТ</span>
+        <strong id="score">0000</strong>
+      </div>
+      <div class="stat timer-stat">
+        <span class="stat-label">ОСТАЛОСЬ</span>
+        <strong id="timer">60<span class="unit"> сек</span></strong>
+      </div>
+      <div class="stat health-stat">
+        <span class="stat-label">ЦЕЛОСТНОСТЬ</span>
+        <strong id="health" aria-label="3 жизни">♥ ♥ ♥</strong>
+      </div>
+    </section>
+
+    <section class="game-shell" aria-label="Игровая зона">
+      <div class="game-toolbar">
+        <span><span class="live-dot"></span> SERVER_NODE_01</span>
+        <span id="game-status">ОЖИДАНИЕ ЗАПУСКА</span>
+      </div>
+
+      <div class="arena" id="arena">
+        <canvas id="game-canvas"
+          aria-label="Игровое поле. Управляйте защитным модулем стрелками или WASD."
+          tabindex="0"></canvas>
+
+        <div class="overlay" id="start-screen">
+          <div class="shield-logo">⬡</div>
+          <div class="overlay-tag">ВХОДЯЩАЯ УГРОЗА ОБНАРУЖЕНА</div>
+          <h2>Сервер под атакой</h2>
+          <p>У тебя есть 60 секунд и 3 жизни.<br>
+            Докажи, что твоя защита надёжна.</p>
+          <button class="primary-button" id="start-button">
+            <span>▶</span> НАЧАТЬ ИГРУ
+          </button>
+          <div class="start-hint">W A S D &nbsp; / &nbsp; ↑ ↓ ← →</div>
+        </div>
+
+        <div class="overlay hidden" id="end-screen">
+          <div class="shield-logo" id="end-icon">⬡</div>
+          <div class="overlay-tag" id="end-tag">СЕССИЯ ЗАВЕРШЕНА</div>
+          <h2 id="end-title">Игра окончена</h2>
+          <p id="end-message">Сессия завершена.</p>
+          <div class="final-score">
+            <span>ИТОГОВЫЙ СЧЁТ</span>
+            <strong id="final-score">0</strong>
+          </div>
+          <button class="primary-button" id="restart-button">
+            ↻ ИГРАТЬ СНОВА
+          </button>
+        </div>
+      </div>
+
+      <div class="game-footer">
+        <span><span class="legend patch-legend"></span> ПАТЧ <b>+10</b></span>
+        <span><span class="legend virus-legend"></span> ВИРУС <b>−1 ♥</b></span>
+        <span id="level-label">УРОВЕНЬ УГРОЗЫ: НИЗКИЙ</span>
+      </div>
+    </section>
+
+    <section class="bottom-grid">
+      <article class="info-card">
+        <div class="info-icon green-icon">⌘</div>
+        <div>
+          <h3>Собирай патчи</h3>
+          <p>Зелёные модули укрепляют защиту и дают 10 очков.</p>
+        </div>
+      </article>
+      <article class="info-card">
+        <div class="info-icon red-icon">!</div>
+        <div>
+          <h3>Избегай угроз</h3>
+          <p>Красные вирусы отнимают жизнь. Всего доступно три.</p>
+        </div>
+      </article>
+      <article class="info-card">
+        <div class="info-icon blue-icon">⌁</div>
+        <div>
+          <h3>Двигайся быстро</h3>
+          <p>Продержись 60 секунд и набери максимальный счёт.</p>
+        </div>
+      </article>
+    </section>
+
+    <footer class="page-footer">
+      <span>CYBER SHIELD © 2026</span>
+      <span>STAY ALERT. STAY SECURE.</span>
+    </footer>
+  </main>
+</body>
+</html>

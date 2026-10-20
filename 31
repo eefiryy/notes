@@ -1,0 +1,98 @@
+const groups = [
+  { id: 'animal', name: 'Животная', icon: '🐾', color: 'violet' },
+  { id: 'plant', name: 'Растительная', icon: '🌿', color: 'green' },
+  { id: 'bacteria', name: 'Бактерия', icon: '🦠', color: 'orange' },
+  { id: 'fungus', name: 'Грибковая', icon: '🍄', color: 'pink' }
+];
+
+const samples = [
+  { name: 'Нейрон', hint: 'Имеет длинный отросток для передачи сигналов', group: 'animal', emoji: '🧠' },
+  { name: 'Клетка листа', hint: 'Содержит хлоропласты для фотосинтеза', group: 'plant', emoji: '🌱' },
+  { name: 'Кишечная палочка', hint: 'Одноклеточный организм без оформленного ядра', group: 'bacteria', emoji: '🦠' },
+  { name: 'Дрожжевая клетка', hint: 'Используется человеком для выпечки и брожения', group: 'fungus', emoji: '🍞' },
+  { name: 'Эритроцит', hint: 'Переносит кислород по организму', group: 'animal', emoji: '🔴' },
+  { name: 'Клетка мха', hint: 'Получает энергию с помощью света', group: 'plant', emoji: '🌿' },
+  { name: 'Молочнокислая бактерия', hint: 'Помогает превращать молоко в йогурт', group: 'bacteria', emoji: '🧫' },
+  { name: 'Шляпочный гриб', hint: 'Питается готовыми органическими веществами', group: 'fungus', emoji: '🍄' },
+  { name: 'Мышечная клетка', hint: 'Сокращается и помогает двигаться', group: 'animal', emoji: '💪' },
+  { name: 'Клетка кактуса', hint: 'Запасает воду и имеет клеточную стенку', group: 'plant', emoji: '🌵' },
+  { name: 'Цианобактерия', hint: 'Микроорганизм, способный к фотосинтезу', group: 'bacteria', emoji: '🔵' },
+  { name: 'Плесневый гриб', hint: 'Образует разветвлённые нити — гифы', group: 'fungus', emoji: '🧬' }
+];
+
+let state;
+const $ = id => document.getElementById(id);
+
+function shuffle(list) {
+  return [...list].sort(() => Math.random() - 0.5);
+}
+
+function startGame() {
+  state = { deck: shuffle(samples), index: 0, score: 0, correct: 0, streak: 0, locked: false };
+  $('result').classList.add('hidden');
+  $('answers').parentElement.classList.remove('finished');
+  renderAnswers();
+  renderSample();
+}
+
+function renderAnswers() {
+  $('answers').innerHTML = groups.map(group => `
+    <button class="answer ${group.color}" data-group="${group.id}">
+      <span>${group.icon}</span><b>${group.name}</b><small>клетка</small>
+    </button>`).join('');
+  document.querySelectorAll('.answer').forEach(button => button.addEventListener('click', () => choose(button.dataset.group)));
+}
+
+function renderSample() {
+  const sample = state.deck[state.index];
+  $('sampleEmoji').textContent = sample.emoji;
+  $('sampleName').textContent = sample.name;
+  $('sampleHint').textContent = sample.hint;
+  $('progress').textContent = `${state.index + 1} / ${samples.length}`;
+  $('score').textContent = state.score;
+  $('streak').textContent = `Серия: ${state.streak}`;
+  $('feedback').textContent = $('riskToggle').checked ? 'Риск включён — награда выше!' : 'Выбери один из вариантов ниже';
+  $('feedback').className = 'feedback';
+  state.locked = false;
+  document.querySelectorAll('.answer').forEach(button => { button.disabled = false; button.classList.remove('selected'); });
+}
+
+function choose(selected) {
+  if (state.locked) return;
+  state.locked = true;
+  const sample = state.deck[state.index];
+  const risk = $('riskToggle').checked;
+  const isCorrect = selected === sample.group;
+  const buttons = document.querySelectorAll('.answer');
+  buttons.forEach(button => { button.disabled = true; if (button.dataset.group === selected) button.classList.add('selected'); });
+  if (isCorrect) {
+    state.score += risk ? 25 : 10;
+    state.correct++;
+    state.streak++;
+    $('feedback').textContent = `Верно! Это ${groups.find(group => group.id === sample.group).name.toLowerCase()} клетка. ${risk ? '+25' : '+10'} очков`;
+    $('feedback').className = 'feedback success';
+  } else {
+    state.score = Math.max(0, state.score - (risk ? 10 : 0));
+    state.streak = 0;
+    $('feedback').textContent = `Не совсем: правильный ответ — ${groups.find(group => group.id === sample.group).name.toLowerCase()} клетка. ${risk ? '−10 очков' : 'Серия сброшена'}`;
+    $('feedback').className = 'feedback error';
+  }
+  $('score').textContent = state.score;
+  $('streak').textContent = `Серия: ${state.streak}`;
+  setTimeout(() => { state.index++; state.index >= samples.length ? finishGame() : renderSample(); }, 950);
+}
+
+function finishGame() {
+  $('answers').innerHTML = '';
+  $('sample').classList.add('finished');
+  $('feedback').textContent = '';
+  $('resultText').textContent = `Ты набрал ${state.score} очков и правильно определил ${state.correct} из ${samples.length} образцов.`;
+  $('result').classList.remove('hidden');
+  $('progress').textContent = `${samples.length} / ${samples.length}`;
+}
+
+$('restart').addEventListener('click', startGame);
+$('riskToggle').addEventListener('change', () => {
+  if (!state.locked) $('feedback').textContent = $('riskToggle').checked ? 'Риск включён — награда выше!' : 'Выбери один из вариантов ниже';
+});
+startGame();

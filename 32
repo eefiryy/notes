@@ -1,0 +1,255 @@
+(() => {
+  "use strict";
+
+  const ROUND_SECONDS = 60;
+  const START_LIVES = 3;
+  const BASE_POINTS = 10;
+  const CRACK_LIFETIME = 1500;
+  const SPAWN_INTERVAL_MIN = 520;
+  const SPAWN_INTERVAL_MAX = 900;
+  const CURSE_CHANCE = 0.23;
+
+  const intro = document.getElementById("intro");
+  const gameScreen = document.getElementById("gameScreen");
+  const resultScreen = document.getElementById("resultScreen");
+  const startBtn = document.getElementById("startBtn");
+  const restartBtn = document.getElementById("restartBtn");
+  const gallery = document.getElementById("gallery");
+  const targetLayer = document.getElementById("targetLayer");
+  const floatingLayer = document.getElementById("floatingLayer");
+  const flashOverlay = document.getElementById("flashOverlay");
+  const scoreEl = document.getElementById("score");
+  const timerEl = document.getElementById("timer");
+  const timerBar = document.getElementById("timerBar");
+  const comboEl = document.getElementById("combo");
+  const comboHint = document.getElementById("comboHint");
+  const livesEl = document.getElementById("lives");
+  const finalScoreEl = document.getElementById("finalScore");
+  const finalComboEl = document.getElementById("finalCombo");
+  const resultMessage = document.getElementById("resultMessage");
+  const resultSymbol = document.getElementById("resultSymbol");
+  const gameTip = document.getElementById("gameTip");
+
+  let score = 0;
+  let lives = START_LIVES;
+  let combo = 1;
+  let bestCombo = 1;
+  let timeLeft = ROUND_SECONDS;
+  let running = false;
+  let startedAt = 0;
+  let lastFrameAt = 0;
+  let spawnTimer = 0;
+  let animationFrame = null;
+  let targets = new Map();
+  let nextTargetId = 0;
+
+  function formatTime(seconds) {
+    const safe = Math.max(0, Math.ceil(seconds));
+    return `${String(Math.floor(safe / 60)).padStart(2, "0")}:${String(safe % 60).padStart(2, "0")}`;
+  }
+
+  function renderHud() {
+    scoreEl.textContent = String(score).padStart(4, "0");
+    timerEl.textContent = formatTime(timeLeft);
+    timerBar.style.width = `${Math.max(0, timeLeft / ROUND_SECONDS * 100)}%`;
+    comboEl.textContent = `x${combo}`;
+    comboHint.textContent = combo > 1 ? `Серия ${combo} подряд` : "Начни серию";
+    livesEl.textContent = `${"♥ ".repeat(lives).trim()}${lives < START_LIVES ? ` ${"♡ ".repeat(START_LIVES - lives).trim()}` : ""}`;
+    livesEl.setAttribute("aria-label", `${lives} из ${START_LIVES} жизней`);
+    timerBar.style.background = timeLeft <= 10 ? "var(--red)" : "var(--gold)";
+  }
+
+  function resetGame() {
+    score = 0;
+    lives = START_LIVES;
+    combo = 1;
+    bestCombo = 1;
+    timeLeft = ROUND_SECONDS;
+    running = true;
+    startedAt = performance.now();
+    lastFrameAt = startedAt;
+    spawnTimer = 0;
+    targets.forEach((target) => clearTimeout(target.timeout));
+    targets.clear();
+    targetLayer.replaceChildren();
+    floatingLayer.replaceChildren();
+    gallery.classList.remove("ended");
+    flashOverlay.classList.remove("flash");
+    intro.classList.add("hidden");
+    resultScreen.classList.add("hidden");
+    gameScreen.classList.remove("hidden");
+    gameTip.textContent = "Нажимай только на золотые трещины.";
+    renderHud();
+    spawnTarget();
+    animationFrame = requestAnimationFrame(loop);
+  }
+
+  function randomPosition() {
+    const rect = gallery.getBoundingClientRect();
+    const marginX = Math.min(48, rect.width * 0.09);
+    const marginY = 54;
+    return {
+      x: marginX + Math.random() * Math.max(1, rect.width - marginX * 2),
+      y: marginY + Math.random() * Math.max(1, rect.height - marginY * 2 - 12)
+    };
+  }
+
+  function spawnTarget() {
+    if (!running || targets.size >= 4) return;
+
+    const isCursed = Math.random() < CURSE_CHANCE;
+    const position = randomPosition();
+    const id = ++nextTargetId;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `target ${isCursed ? "cursed" : "crack"}`;
+    button.style.left = `${position.x}px`;
+    button.style.top = `${position.y}px`;
+    button.setAttribute("aria-label", isCursed ? "Проклятый артефакт — не нажимать" : "Магическая трещина — нажать для восстановления");
+    button.innerHTML = isCursed
+      ? '<span aria-hidden="true">☠</span>'
+      : '<span class="crack-shape" aria-hidden="true"></span><span class="target-timer"><span></span></span>';
+    targetLayer.appendChild(button);
+
+    const target = {
+      id,
+      type: isCursed ? "cursed" : "crack",
+      button,
+      bornAt: performance.now(),
+      expiresAt: performance.now() + (isCursed ? 1700 : CRACK_LIFETIME),
+      timeout: null
+    };
+    targets.set(id, target);
+    button.addEventListener("click", () => handleTargetClick(id));
+
+    if (!isCursed) {
+      const bar = button.querySelector(".target-timer span");
+      const updateBar = () => {
+        if (!targets.has(id)) return;
+        const remaining = Math.max(0, (target.expiresAt - performance.now()) / CRACK_LIFETIME);
+        bar.style.width = `${remaining * 100}%`;
+        if (remaining > 0) requestAnimationFrame(updateBar);
+      };
+      requestAnimationFrame(updateBar);
+    }
+
+    target.timeout = window.setTimeout(() => {
+      if (!targets.has(id)) return;
+      removeTarget(id);
+      if (target.type === "crack" && running) {
+        resetCombo();
+        gameTip.textContent = "Трещина исчезла — серия сброшена.";
+      }
+    }, target.expiresAt - performance.now());
+  }
+
+  function removeTarget(id) {
+    const target = targets.get(id);
+    if (!target) return;
+    clearTimeout(target.timeout);
+    target.button.remove();
+    targets.delete(id);
+  }
+
+  function showFloating(text, x, y, bad = false) {
+    const item = document.createElement("span");
+    item.className = `floating-text${bad ? " bad" : ""}`;
+    item.textContent = text;
+    item.style.left = `${x}px`;
+    item.style.top = `${y}px`;
+    floatingLayer.appendChild(item);
+    window.setTimeout(() => item.remove(), 900);
+  }
+
+  function resetCombo() {
+    combo = 1;
+    renderHud();
+  }
+
+  function handleTargetClick(id) {
+    if (!running) return;
+    const target = targets.get(id);
+    if (!target) return;
+
+    const galleryRect = gallery.getBoundingClientRect();
+    const targetRect = target.button.getBoundingClientRect();
+    const x = targetRect.left - galleryRect.left + targetRect.width / 2;
+    const y = targetRect.top - galleryRect.top + targetRect.height / 2;
+
+    if (target.type === "crack") {
+      removeTarget(id);
+      const earned = BASE_POINTS * combo;
+      score += earned;
+      showFloating(`+${earned}`, x, y);
+      combo += 1;
+      bestCombo = Math.max(bestCombo, combo - 1);
+      gameTip.textContent = combo > 2 ? "Отличная серия! Продолжай." : "Экспонат восстановлен. Ищи следующую трещину.";
+      renderHud();
+    } else {
+      removeTarget(id);
+      lives = Math.max(0, lives - 1);
+      resetCombo();
+      flashOverlay.classList.remove("flash");
+      void flashOverlay.offsetWidth;
+      flashOverlay.classList.add("flash");
+      showFloating("−1 ♥", x, y, true);
+      gameTip.textContent = "Проклятие! Будь внимательнее.";
+      renderHud();
+      if (lives <= 0) finishGame("lives");
+    }
+
+    if (running && targets.size < 3) {
+      window.setTimeout(() => {
+        if (running && targets.size < 3) spawnTarget();
+      }, 180);
+    }
+  }
+
+  function loop(now) {
+    if (!running) return;
+    const dt = Math.min((now - lastFrameAt) / 1000, 0.1);
+    lastFrameAt = now;
+    timeLeft = Math.max(0, ROUND_SECONDS - (now - startedAt) / 1000);
+    spawnTimer += dt * 1000;
+    if (spawnTimer >= SPAWN_INTERVAL_MIN + Math.random() * (SPAWN_INTERVAL_MAX - SPAWN_INTERVAL_MIN)) {
+      spawnTimer = 0;
+      spawnTarget();
+    }
+    renderHud();
+    if (timeLeft <= 0) {
+      finishGame("time");
+      return;
+    }
+    animationFrame = requestAnimationFrame(loop);
+  }
+
+  function finishGame(reason) {
+    if (!running) return;
+    running = false;
+    if (animationFrame !== null) cancelAnimationFrame(animationFrame);
+    targets.forEach((target) => clearTimeout(target.timeout));
+    targets.clear();
+    targetLayer.replaceChildren();
+    gallery.classList.add("ended");
+    finalScoreEl.textContent = score.toLocaleString("ru-RU");
+    finalComboEl.textContent = `Лучшая серия: x${bestCombo}`;
+    resultSymbol.textContent = reason === "lives" ? "☾" : "✦";
+    resultMessage.textContent = reason === "lives"
+      ? "Проклятые реликвии оказались сильнее. Отдохни и попробуй ещё раз."
+      : "Музей пережил эту ночь. Отличная работа хранителя истории!";
+    gameScreen.classList.add("hidden");
+    resultScreen.classList.remove("hidden");
+  }
+
+  startBtn.addEventListener("click", resetGame);
+  restartBtn.addEventListener("click", resetGame);
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden && running) {
+      lastFrameAt = performance.now();
+    }
+  });
+})();
+
+
+

@@ -1,0 +1,23 @@
+def assess_yield(number_of_plants, average_weight):
+    total_weight = (number_of_plants * average_weight)/1000
+    if total_weight>100:
+        rating = "Ожидается отличный урожай."
+    elif total_weight>50:
+        rating = "Ожидается хороший урожай."
+    elif total_weight>0:
+        rating = "Урожай будет так себе."
+    else:
+        rating = "Урожая не будет."
+    return total_weight, rating
+
+
+    # Вычислите общий вес урожая в килограммах.
+    # В зависимости от получившегося веса урожая выберите подходящее сообщение.
+    # Верните два значения: общий вес и строку с сообщением.
+
+
+# Вызываем функцию и распаковываем кортеж:
+total_weight, rating = assess_yield(50, 200)
+
+# Печатаем результат:
+print(total_weight, 'кг.', rating)

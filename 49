@@ -1,0 +1,31 @@
+from decimal import Decimal
+import datetime
+
+
+
+goods = {
+    'Пельмени Универсальные': [
+        # Первая партия продукта 'Пельмени Универсальные':
+        {'amount': Decimal('0.5'), 'expiration_date': datetime.date(2023, 7, 15)},
+        # Вторая партия продукта 'Пельмени Универсальные':
+        {'amount': Decimal('2'), 'expiration_date': datetime.date(2023, 8, 1)},
+    ],
+    'Вода': [
+        {'amount': Decimal('1.5'), 'expiration_date': None}
+    ],
+} #исходник
+
+items={}
+
+def add(items, title, amount, expiration_date=None):
+    if title not in items.keys():
+        items[title]=[] #в айтемс добавляем новый ключ тайтл
+    if expiration_date is not None:
+        expiration_date = datetime.datetime.strptime(expiration_date, '%Y-%m-%d' ) # перводим дату
+        expiration_date = expiration_date.date() #убираем время хз как по другому
+        items[title].append({'amount': amount, 'expiration_date': expiration_date}) # даем и срок и колво
+    else:
+        items[title].append({'amount': amount, 'expiration_date': None}) # только колво(дата написана нон) 
+
+
+

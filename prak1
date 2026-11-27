@@ -1,0 +1,25 @@
+import requests
+
+url = "https://pokeapi.co/api/v2"
+
+# список 20
+res = requests.get(f"{url}/pokemon?limit=20").json()
+
+# имена
+print("Список покемонов:")
+for p in res['results']:
+    print(p['name'])
+
+# имя
+name = input("\nИмя покемона: ").lower()
+
+# инфа
+info = requests.get(f"{url}/pokemon/{name}").json()
+
+# вывод
+print("\nИнформация:")
+print("Имя:", info['name'])
+print("Тип:", ", ".join(t['type']['name'] for t in info['types']))
+print("Вес:", info['weight'] / 10, "кг")
+print("Рост:", info['height'] / 10, "м")
+print("Способности:", ", ".join(a['ability']['name'] for a in info['abilities']))
